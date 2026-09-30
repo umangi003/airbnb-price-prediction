@@ -95,14 +95,19 @@ def describe_change(label, before, after, noise=None):
 # ============================================
 # 1. EXTRACT AND LOAD FROM processed.zip
 # ============================================
-if FORCE_RE_EXTRACT and os.path.exists(EXTRACT_DIR):
-    shutil.rmtree(EXTRACT_DIR)
-    print(f"Cleared old '{EXTRACT_DIR}/' - re-extracting from {ZIP_PATH}.")
-
-if not os.path.exists(EXTRACT_DIR):
-    with zipfile.ZipFile(ZIP_PATH, "r") as zf:
-        zf.extractall(EXTRACT_DIR)
-    print(f"Extracted {ZIP_PATH} to {EXTRACT_DIR}/")
+if os.path.exists(ZIP_PATH):
+    # Local testing convenience: a processed.zip exists, extract it as before
+    if FORCE_RE_EXTRACT and os.path.exists(EXTRACT_DIR):
+        shutil.rmtree(EXTRACT_DIR)
+        print(f"Cleared old '{EXTRACT_DIR}/' - re-extracting from {ZIP_PATH}.")
+    if not os.path.exists(EXTRACT_DIR):
+        with zipfile.ZipFile(ZIP_PATH, "r") as zf:
+            zf.extractall(EXTRACT_DIR)
+        print(f"Extracted {ZIP_PATH} to {EXTRACT_DIR}/")
+else:
+    EXTRACT_DIR = "."
+    print(f"No {ZIP_PATH} found — reading CSVs directly from the repo "
+          f"(e.g. data/processed/) instead.")
 
 X_train = pd.read_csv(find_file("X_train.csv"))
 X_test = pd.read_csv(find_file("X_test.csv"))
