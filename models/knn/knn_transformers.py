@@ -2,6 +2,9 @@
 
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
+#VALIDATION STRATEGY - SCIKIT-LEARN STANDARD API INTEGRATION - BASEESTIMATOR, TRANSFORMERMIXIN
+
+
 
 # Dictionary defining dummy variable groups and their dropped baseline/reference columns
 DEFAULT_REFERENCE_GROUPS = {
@@ -18,7 +21,7 @@ DEFAULT_CAP_COLUMNS = [
     "calculated_host_listings_count",
 ]
 
-
+#TECHNICAL DECISIONS/Optimization Decisions - RESTORE DROPPED LOCATION OF AIRBNB AND ROOMTYPE
 class RestoreReferenceCategories(TransformerMixin, BaseEstimator):
     """Transformer to reconstruct dropped reference dummy columns and cast booleans."""
     
@@ -82,6 +85,8 @@ class RestoreReferenceCategories(TransformerMixin, BaseEstimator):
         return restored[self.feature_names_out_]
 
 
+#TECHNICAL DECISIONS - OUTLIER CAPPER - REMOVE OUTLIERS AND HAVE FALL BACK OUTLIER IF CAPPING FAILS
+# -bathrooms, bedrooms, beds, host_listings_count, calculated_host_listings_count
 class OutlierCapper(TransformerMixin, BaseEstimator):
     """Transformer that caps extreme values in numeric columns using IQR or quantile bounds."""
     
@@ -100,7 +105,8 @@ class OutlierCapper(TransformerMixin, BaseEstimator):
         
         self.bounds_ = {}          # Dictionary mapping column names to (lower, upper) float bounds
         self.used_fallback_ = []   # List tracking columns where IQR range collapsed and fallback was used
-        
+
+        #Optimization Decisions-calculates lower and upper capping limits
         for col in self.columns_:
             # Drop missing values to compute accurate statistical distribution metrics
             values = X[col].dropna()

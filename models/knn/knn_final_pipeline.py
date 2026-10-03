@@ -143,6 +143,8 @@ try:
     X_te_orig = pd.read_csv(find_file("X_test_scaled.csv"))
     
     # Fit a standard un-tuned KNN model directly on pre-scaled legacy data
+    #OPTIMIZATION DECISIONS - EVALUATE GROUP'S ORIGINAL SCALED FILE (k=5)
+    #PREPROCESSING IMPACT
     knn_orig = KNeighborsRegressor(n_neighbors=5).fit(X_tr_orig, y_train)
     rmse_group_orig = rmse(y_test, knn_orig.predict(X_te_orig))
     print(f"\nGroup's original scaled data (k=5): RMSE = {rmse_group_orig:.4f} "
@@ -154,12 +156,14 @@ except FileNotFoundError:
 
 
 # ============================================
-# 3. CROSS-VALIDATED HYPERPARAMETER SEARCH ON THE FULL PIPELINE
+# 3. CROSS-VALIDATED HYPERPARAMETER SEARCH ON THE FULL PIPELINE-
+# VALIDATION STRATEGY - SCIKIT-LEARN STANDARD API INTEGRATION - BASEESTIMATOR, TRANSFORMERMIXIN
 # ============================================
 # Define a 5-fold cross-validation strategy with fixed shuffling seed
 cv_strategy = KFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
 
-# Specify candidate parameters for KNN regressor (prefixed with step name "knn__")
+# Specify candidate parameters for KNN regressor (prefixed with step name "knn__")-
+# HYPERPARAMETER TUNING - SCIKIT-LEARN STANDARD API INTEGRATION - BASEESTIMATOR, TRANSFORMERMIXIN
 param_grid = {
     "knn__n_neighbors": [5, 7, 9, 11, 15, 21],
     "knn__weights": ["uniform", "distance"],
@@ -182,6 +186,7 @@ grid_search.fit(X_train, y_train)
 print(f"\nGrid search took {(time.time() - start) / 60:.1f} minutes.")
 
 # Extract performance statistics for the best hyperparameter configuration
+#INTERPRETING RESULTS
 best_idx = grid_search.best_index_
 cv_mean = -grid_search.cv_results_["mean_test_score"][best_idx]  # Invert sign back to positive RMSE
 cv_std = grid_search.cv_results_["std_test_score"][best_idx]
@@ -214,7 +219,7 @@ print(f"Model uses {len(feature_names)} features. "
 
 
 # ============================================
-# 5. TEST-SET EVALUATION: BASELINE VS TUNED
+# 5. TEST-SET EVALUATION: BASELINE VS TUNED-EVALUATION STRATEGY - SCIKIT-LEARN STANDARD API INTEGRATION - BASEESTIMATOR, TRANSFORMERMIXIN
 # ============================================
 # Fit an un-tuned baseline pipeline (k=5 default) for comparison
 baseline_pipeline = build_pipeline(KNeighborsRegressor(n_neighbors=5))
