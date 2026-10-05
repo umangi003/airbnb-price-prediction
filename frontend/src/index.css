@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Background Pattern - Subtle Grid (Darker) */
+body {
+  background-color: #f5f3f0;
+  background-image: 
+    linear-gradient(rgba(220, 38, 38, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220, 38, 38, 0.10) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.bg-eggshell {
+  background-color: #f5f3f0;
+  background-image: 
+    linear-gradient(rgba(220, 38, 38, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220, 38, 38, 0.10) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Enhanced Input Styling */
+.input-field,
+.select-field {
+  @apply w-full px-4 py-3 text-base border-2 border-gray-300 rounded-lg focus:outline-none focus:border-cherry-red transition-all bg-white font-medium;
+}
+
+.input-field::placeholder,
+.select-field::placeholder {
+  @apply text-gray-400;
+}
+
+.input-field:disabled,
+.select-field:disabled {
+  @apply bg-gray-100 cursor-not-allowed opacity-60;
+}
+
+.input-field:focus,
+.select-field:focus {
+  @apply border-cherry-red shadow-lg ring-4 ring-cherry-red ring-opacity-20;
+}
+
+.toggle-checkbox {
+  @apply w-5 h-5 text-cherry-red border-2 border-gray-300 rounded focus:ring-2 focus:ring-cherry-red cursor-pointer;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* Card Styling */
+.card {
+  @apply bg-white rounded-lg p-8 border border-gray-200 shadow-md;
+}
+
+.card:hover {
+  @apply shadow-lg;
+}
+
+/* Button Styling */
+.btn-primary {
+  @apply w-full bg-gradient-to-r from-cherry-red to-red-600 text-white font-bold py-3 px-6 rounded-lg hover:from-red-700 hover:to-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition-all;
+}
+
+/* Text Styles */
+.text-error {
+  @apply text-red-600 text-sm font-semibold mt-2;
+}
+
+.text-help {
+  @apply text-gray-500 text-sm mt-1;
+}
+
+.select-field {
+  @apply cursor-pointer;
+}
