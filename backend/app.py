@@ -1,15 +1,14 @@
-from fastapi import FastAPI
+﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from feature_builder import build_feature_vector, _feature_names
+from feature_builder import build_feature_vector
 
-app = FastAPI(title="Airbnb Price Prediction API")
+app = FastAPI(title="Airbnb Price Prediction API - XGBoost Only")
 
-# CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,36 +17,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load models
-models = {}
+model = None
 model_dir = Path("../models")
 
 try:
-    knn_data = joblib.load(model_dir / "knn" / "knn_final_pipeline.pkl")
-    # Handle KNN model which is saved as dict with pipeline inside
-    if isinstance(knn_data, dict) and 'pipeline' in knn_data:
-        models['knn'] = knn_data['pipeline']
-    else:
-        models['knn'] = knn_data
-    print("[OK] KNN model loaded")
-except Exception as e:
-    print(f"[ERROR] KNN model failed: {e}")
-
-try:
-    models['linear_regression'] = joblib.load(model_dir / "linear_regression" / "lr_final_pipeline.pkl")
-    print("[OK] Linear Regression model loaded")
-except Exception as e:
-    print(f"[ERROR] Linear Regression model failed: {e}")
-
-try:
-    models['random_forest'] = joblib.load(model_dir / "random_forest" / "rf_final_pipeline.pkl")
-    print("[OK] Random Forest model loaded")
-except Exception as e:
-    print(f"[ERROR] Random Forest model failed: {e}")
-
-try:
-    models['xgboost'] = joblib.load(model_dir / "xgboost" / "xgb_final_pipeline.pkl")
-    print("[OK] XGBoost model loaded")
+    model = joblib.load(model_dir / "xgboost" / "xgb_final_pipeline.pkl")
+    print("[OK] XGBoost model loaded successfully")
 except Exception as e:
     print(f"[ERROR] XGBoost model failed: {e}")
 
@@ -56,41 +31,24 @@ class PredictionInput(BaseModel):
 
 @app.post("/predict")
 def predict(input_data: PredictionInput):
-    """Get predictions from all available models"""
     try:
         feature_vector = build_feature_vector(input_data.data)
-
-        # Create DataFrame with proper column names
-        if _feature_names:
-            X = pd.DataFrame([feature_vector], columns=_feature_names)
-        else:
-            X = pd.DataFrame([feature_vector])
-
-        predictions = {}
-        for model_name, model in models.items():
-            try:
-                pred = model.predict(X)[0]
-                predictions[model_name] = float(pred)
-            except Exception as e:
-                predictions[model_name] = f"Error: {str(e)}"
-
-        valid_preds = [p for p in predictions.values() if isinstance(p, (int, float))]
-        avg = float(np.mean(valid_preds)) if valid_preds else 0.0
-
+        X = pd.DataFrame([feature_vector])
+        log_prediction = model.predict(X)[0]
+        price_eur = float(np.expm1(log_prediction))
+        
         return {
-            "predictions": predictions,
-            "average": avg
+            "model": "XGBoost",
+            "log_prediction": float(log_prediction),
+            "predicted_price_eur": price_eur,
+            "status": "success"
         }
     except Exception as e:
-        return {
-            "error": str(e),
-            "predictions": {},
-            "average": 0.0
-        }
+        return {"error": str(e), "predicted_price_eur": 0.0, "status": "error"}
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "models_loaded": list(models.keys())}
+    return {"status": "ok", "model": "XGBoost", "model_loaded": model is not None}
 
 if __name__ == "__main__":
     import uvicorn
