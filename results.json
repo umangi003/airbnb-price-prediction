@@ -1,0 +1,107 @@
+{
+    "status": "SUCCESS",
+    "models_found": 4,
+    "model_list": [
+        "rf_final_pipeline",
+        "xgb_final_pipeline",
+        "knn_final_pipeline",
+        "lr_final_pipeline"
+    ],
+    "predictions": [
+        {
+            "test_name": "Test 1: Standard Listing",
+            "input_data": [
+                0,
+                2,
+                1,
+                4,
+                1,
+                5,
+                1,
+                0.75,
+                1,
+                4.5
+            ],
+            "predictions": {
+                "xgb_final_pipeline": 6.35
+            },
+            "average_price_eur": 6.35
+        },
+        {
+            "test_name": "Test 2: Premium - Marais",
+            "input_data": [
+                0,
+                3,
+                2,
+                6,
+                1,
+                8,
+                1,
+                0.9,
+                1,
+                4.8
+            ],
+            "predictions": {
+                "xgb_final_pipeline": 2.41
+            },
+            "average_price_eur": 2.41
+        },
+        {
+            "test_name": "Test 3: Private Room",
+            "input_data": [
+                1,
+                1,
+                1,
+                2,
+                1,
+                12,
+                0,
+                0.6,
+                0,
+                4.0
+            ],
+            "predictions": {
+                "xgb_final_pipeline": 4.79
+            },
+            "average_price_eur": 4.79
+        },
+        {
+            "test_name": "Test 4: Shared Room",
+            "input_data": [
+                2,
+                1,
+                1,
+                1,
+                1,
+                20,
+                0,
+                0.3,
+                0,
+                3.5
+            ],
+            "predictions": {
+                "xgb_final_pipeline": 3.41
+            },
+            "average_price_eur": 3.41
+        },
+        {
+            "test_name": "Test 5: Luxury",
+            "input_data": [
+                0,
+                4,
+                3,
+                8,
+                1,
+                2,
+                1,
+                0.95,
+                1,
+                4.9
+            ],
+            "predictions": {
+                "xgb_final_pipeline": 2.41
+            },
+            "average_price_eur": 2.41
+        }
+    ]
+}
